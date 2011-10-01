@@ -1,0 +1,12 @@
+{
+"name": "Uramaki",
+"version": "0.0.1",
+"description": "Login to Firefox",
+"browser_action": {
+  "default_icon": "firefox.png",
+  "popup": "popup.html"
+},
+"permissions": [
+  "http://uramaki.heroku.com"
+]
+}
