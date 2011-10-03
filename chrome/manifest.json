@@ -1,12 +1,19 @@
 {
 "name": "Uramaki",
 "version": "0.0.1",
-"description": "Login to Firefox",
+"description": "Connect with Firefox",
 "browser_action": {
   "default_icon": "firefox.png",
   "popup": "popup.html"
 },
+"background_page": "background.html",
+"chrome_url_overrides": {
+    "newtab": "home.html"
+  },
 "permissions": [
-  "http://uramaki.heroku.com"
+  "http://uramaki.heroku.com",
+  "http://localhost",
+  "experimental",
+  "tabs"
 ]
 }

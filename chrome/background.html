@@ -1,0 +1,26 @@
+<head>
+<script>
+/*
+chrome.browserAction.onClicked.addListener(function(tab) {
+  chrome.tabs.create({pinned:true, url:"home.html"});
+});
+*/
+
+localStorage.dnt = "";
+var DNT_HEADER = {name:"DNT", value:"1"};
+
+chrome.experimental.webRequest.onBeforeSendHeaders.addListener(
+  function(details) {
+    var headers = details.requestHeaders;
+
+    if (localStorage.dnt != "")
+       headers[headers.length] = DNT_HEADER;
+
+    return {requestHeaders: headers};
+  },
+  {},
+  ["requestHeaders", "blocking"]);
+</script>
+</head>
+<body>
+</body>

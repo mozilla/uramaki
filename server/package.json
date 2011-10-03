@@ -1,0 +1,15 @@
+{
+    "name": "uramaki-server"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "connect": "1.6.2"
+    , "express": "2.4.3"
+    , "vows": "0.5.8"
+    , "bcrypt": "0.4.0"
+    , "ejs": "0.4.3"
+    , "express-csrf": "0.3.2"
+    , "JSONSelect": "0.2.1"
+    , "connect-cookie-session" : "0.0.2"
+  }
+}
