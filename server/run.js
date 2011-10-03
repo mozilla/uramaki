@@ -55,6 +55,7 @@ app.get('/foo', function(req, res, next) {
 });
 
 app.get('/bookmarks', function(req, res, next) {
+  console.log("bookmarks!");
   res.json({"bookmarks": [
     {
       "url" : "http://ben.adida.net",
