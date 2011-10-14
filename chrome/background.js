@@ -6,7 +6,7 @@
 
 // hacks for now
 USERS = {
-  'alice': {
+  'alice@alice.com': {
     'name': 'Alice',
     'dnt': false,
     'bookmarks': [
@@ -24,7 +24,7 @@ USERS = {
       }    
     ]
   },
-  'bob': {
+  'bob@bob.com': {
     'name': 'Bob',
     'dnt': true,
     'bookmarks': [
@@ -44,7 +44,28 @@ USERS = {
   }
 };
 
-var CURRENT_USER = 'alice';
+MORE_USERS = {
+  'charlie@charlie.com': {
+    'name': 'Charlie',
+    'dnt': true,
+    'bookmarks': [
+      {
+        "url" : "https://secure.wikimedia.org/wikipedia/en/wiki/Charlie_and_the_Chocolate_Factory",
+        "title" : "Charlie and the Chocolate Factory"
+      },
+      {
+        "url" : "http://mozilla.org",
+        "title" : "Mozilla"
+      },
+      {
+        "url" : "http://theonion.com",
+        "title" : "The Onion"
+      }    
+    ]    
+  }  
+};
+
+var CURRENT_USER = 'alice@alice.com';
 var CALLBACKS = [];
 
 function set_user(user) {

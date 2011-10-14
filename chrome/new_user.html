@@ -1,0 +1,24 @@
+<head>
+<link href="popup.css" rel="stylesheet" type="text/css">
+<script src="jquery-1.6.4.min.js"></script>
+<script>
+var bg_page = chrome.extension.getBackgroundPage();
+function new_user() {
+  var email = $(":input[name=email]").val();
+  if (bg_page.MORE_USERS[email])
+     bg_page.USERS[email] = bg_page.MORE_USERS[email];
+
+  window.location="popup.html";
+}
+</script>
+</head>
+<body>
+<div class="button">new user</div>
+<form id="newuser_form" action="javascript:new_user();">
+Email: <input type="text" name="email" /><br />
+Password: <input type="password" name="password" /><br />
+<input type="submit" value="log in" />
+</form>
+</body>
+
+
