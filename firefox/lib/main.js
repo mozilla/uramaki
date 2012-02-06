@@ -1,13 +1,25 @@
 const widgets = require("widget");
 const tabs = require("tabs");
+const data = require("self").data;
+const panel = require("panel");
 
-var widget = widgets.Widget({
-  id: "mozilla-link",
-  label: "Mozilla website",
-  contentURL: "http://www.mozilla.org/favicon.ico",
-  onClick: function() {
-    tabs.open("http://www.mozilla.org/");
-  }
+var connectPanel = panel.Panel({
+  contentURL : data.url("signin.html"),
+  contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("signin.js")],
+  width: 422,
+  height: 272,
 });
 
-console.log("The add-on is running.");
+connectPanel.port.on('login', function(email) {
+  connectPanel.port.emit('loadBCP', {url: "http://cnn.com"});
+});
+
+
+var widget = widgets.Widget({
+  id: "connect-widget",
+  label: "Connect to Firefox",
+  contentURL: data.url('firefox.png'),
+  panel: connectPanel
+});
+
+console.log("connect-to-firefox add-on is running.");
