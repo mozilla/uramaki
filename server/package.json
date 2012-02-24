@@ -3,13 +3,21 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "connect": "1.6.2"
-    , "express": "2.4.3"
-    , "vows": "0.5.8"
-    , "bcrypt": "0.4.0"
+      "connect": "1.7.2"
+    , "express": "2.5.0"
+    , "bcrypt": ">= 0.5.x"
     , "ejs": "0.4.3"
     , "express-csrf": "0.3.2"
     , "JSONSelect": "0.2.1"
-    , "connect-cookie-session" : "0.0.2"
+    , "client-sessions" : "0.0.3"
+    , "winston" : "0.5.6"
+    , "urlparse": "0.0.1"
+  },
+  "devDependencies": {
+    "vows": "0.5.13"
+  },
+  "scripts": {
+    "start": "bin/uramaki_server.js",
+    "test": "./node_modules/.bin/vows --spec"
   }
 }

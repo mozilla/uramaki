@@ -2,6 +2,7 @@ const widgets = require("widget");
 const tabs = require("tabs");
 const data = require("self").data;
 const panel = require("panel");
+const bcp = require("bcp");
 
 var connectPanel = panel.Panel({
   contentURL : data.url("signin.html"),
@@ -11,7 +12,10 @@ var connectPanel = panel.Panel({
 });
 
 connectPanel.port.on('login', function(email) {
-  connectPanel.port.emit('loadBCP', {url: "http://cnn.com"});
+  // discover the BCP for the email address in question
+  bcp.discover(email, function(bcp) {
+    connectPanel.port.emit('loadBCP', {url: bcp.loginURL});
+  });
 });
 
 
