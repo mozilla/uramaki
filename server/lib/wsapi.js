@@ -73,7 +73,7 @@ exports.authenticateSession = authenticateSession;
 exports.checkPassword = checkPassword;
 
 exports.setup = function(options, app) {
-  const WSAPI_PREFIX = '/wsapi/';
+  const WSAPI_PREFIX = '';
 
   // If externally we're serving content over SSL we can enable things
   // like strict transport security and change the way cookies are set
@@ -120,7 +120,7 @@ exports.setup = function(options, app) {
         req.connection.proxySecure = true;
 
       const operation = purl.pathname.substr(WSAPI_PREFIX.length);
-
+      
       // check to see if the api is known here, before spending more time with
       // the request.
       if (!wsapis.hasOwnProperty(operation) ||
@@ -189,6 +189,13 @@ exports.setup = function(options, app) {
 
     try {
       var api = require(path.join(__dirname, 'wsapi', f));
+
+      // does it override the URL?
+      if (api.url) {
+        operation = api.url;
+        if (operation[0] != '/')
+          logger.info("be careful, no starting / in that operation, not likely to work");
+      }
 
       wsapis[operation] = api;
       

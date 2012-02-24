@@ -5,6 +5,7 @@
 const
 wsapi = require('../wsapi.js');
 
+exports.url = '/foo/bar';
 exports.method = 'get';
 exports.writes_db = false;
 //exports.authed = false;
