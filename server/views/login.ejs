@@ -1,0 +1,43 @@
+
+<script>
+
+window.onload = function() {
+  document.getElementById("email").innerHTML = "---";
+  navigator.id.beginBCPLogin(function(email) {
+     $("#email").html(email);
+     document.getElementById("password").focus();
+  });
+};
+
+function login() {
+  // use email and password for SRP -- eventually XXX
+  $.post('/bcp/login',
+         {email: $('#email').html(), password: $('#password').val()},
+         function(result) {
+           if (!result.success) {
+             navigator.id.raiseBCPLoginFailure();
+             return;
+           }
+
+           // keyed by service description (URI)
+           navigator.id.registerServices(result.services);
+
+           // list of emails
+           navigator.id.registerIdentities(result.identities);
+
+           // single email
+           navigator.id.registerMainIdentity(result.mainIdentity);
+         });
+}
+</script>
+
+<h2>Sign Into Persona</h2>
+
+<form method="post" action="javascript:login();">
+<table border="0">
+<tr><td align="right">Email:</td><td><b><span id="email"></span></b></td></tr>
+<tr><td align="right">Password:</td><td><input type="password" id="password" /></td></tr>
+</table>
+<input type="submit" value="go" />
+</form>
+

@@ -66,6 +66,9 @@ app.use(function(req, resp, next) {
   return next();
 });
 
+// static files first
+app.use(express.static(path.join(__dirname, "..", "static")));
+
 // handle /wsapi requests
 wsapi.setup({}, app);
 
@@ -75,8 +78,6 @@ app.use(function(req, res, next) {
   res.setHeader('Vary', 'Accept-Encoding,Accept-Language');
   next();
 });
-
-app.use(express.static(path.join(__dirname, "..", "resources", "static")));
 
 // custom 404 page
 app.use(function(req, res,next) {

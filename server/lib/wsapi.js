@@ -123,8 +123,7 @@ exports.setup = function(options, app) {
       
       // check to see if the api is known here, before spending more time with
       // the request.
-      if (!wsapis.hasOwnProperty(operation) ||
-          wsapis[operation].method.toLowerCase() !== req.method.toLowerCase())
+      if (!wsapis[req.method.toLowerCase()].hasOwnProperty(operation))
       {
         return httputils.badRequest(resp, "no such api");
       }
@@ -134,7 +133,8 @@ exports.setup = function(options, app) {
         bodyParser(req, resp, function() {
           cookieSessionMiddleware(req, resp, function() {
             // only on POSTs
-            if (req.method === "POST") {
+            // FIXME: for now we skip this test with && false XXX
+            if (req.method === "POST" && false) {
               var denied = false;
               
               if (req.session === undefined) { // there must be a session
@@ -169,7 +169,10 @@ exports.setup = function(options, app) {
   });
 
   // load all of the APIs supported by this process
-  var wsapis = { };
+  var wsapis = {
+    "get": {},
+    "post": {}
+  };
 
   function describeOperation(name, op) {
     var str = "  " + name + " (";
@@ -197,14 +200,14 @@ exports.setup = function(options, app) {
           logger.info("be careful, no starting / in that operation, not likely to work");
       }
 
-      wsapis[operation] = api;
+      wsapis[api.method.toLowerCase()][operation] = api;
       
       // set up the argument validator
       if (api.args) {
         if (!Array.isArray(api.args)) throw "exports.args must be an array of strings";
-        wsapis[operation].validate = validate(api.args);
+        api.validate = validate(api.args);
       } else {
-        wsapis[operation].validate = function(req,res,next) { next(); };
+        api.validate = function(req,res,next) { next(); };
       }
 
     } catch(e) {
@@ -216,9 +219,11 @@ exports.setup = function(options, app) {
 
   // debug output - all supported apis
   logger.debug("WSAPIs:");
-  Object.keys(wsapis).forEach(function(api) {
-    if (options.forward_writes && wsapis[api].writes_db) return;
-    describeOperation(api, wsapis[api]);
+  Object.keys(wsapis).forEach(function(method) {
+    logger.debug("method " + method);
+    Object.keys(wsapis[method]).forEach(function(api) {
+      describeOperation(api, wsapis[method][api]);
+    });
   });
 
   app.use(function(req, resp, next) {
@@ -226,18 +231,19 @@ exports.setup = function(options, app) {
 
     if (purl.pathname.substr(0, WSAPI_PREFIX.length) === WSAPI_PREFIX) {
       const operation = purl.pathname.substr(WSAPI_PREFIX.length);
+      const method = req.method.toLowerCase();
 
       // at this point, we *know* 'operation' is valid API, give checks performed
       // above
 
       // does the request require authentication?
-      if (wsapis[operation].authed && !isAuthed(req, wsapis[operation].authed)) {
+      if (wsapis[method][operation].authed && !isAuthed(req, wsapis[method][operation].authed)) {
         return httputils.badRequest(resp, "requires authentication");
       }
 
       // validate the arguments of the request
-      wsapis[operation].validate(req, resp, function() {
-        wsapis[operation].process(req, resp);
+      wsapis[method][operation].validate(req, resp, function() {
+        wsapis[method][operation].process(req, resp);
       });
     } else {
       next();

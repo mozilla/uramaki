@@ -1,6 +1,8 @@
 
 var login_done = false;
 
+console.log("loading signin.js");
+
 $('#login').submit(function(e) {
   if (!login_done)
     self.port.emit('login', $('#email').val());
@@ -9,8 +11,3 @@ $('#login').submit(function(e) {
   return false;
 });
 
-// browsing context provider
-self.port.on("loadBCP", function(message) {
-  $('#bcp').show();
-  $('#bcp').attr('src',message.url);  
-});
