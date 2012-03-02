@@ -3,6 +3,20 @@ const tabs = require("tabs");
 const data = require("self").data;
 const panel = require("panel");
 const bcp = require("bcp");
+const timers = require("timers");
+
+var ID = null;
+
+function showErrorPanel(message) {
+  var errorPanel = panel.Panel({
+    contentURL : data.url("error.html"),
+    width: 422,
+    height: 75
+  });
+
+  errorPanel.show();
+  timers.setTimeout(function() {errorPanel.destroy();}, 3000);
+}
 
 function makeBCPPanel(signinURL) {
   var bcpPanel = panel.Panel({
@@ -13,18 +27,30 @@ function makeBCPPanel(signinURL) {
     contentScriptWhen: 'ready'
   });
 
-  bcpPanel.port.on('bcpLoginFailure', function(reason) {
-    console.log("got failure");
+  bcpPanel.port.on('authenticationFailure', function(reason) {
     bcpPanel.hide();
-    console.log('failure');
+    showErrorPanel("could not log in");
   });
 
+  bcpPanel.port.on('authenticationCanceled', function() {
+    bcpPanel.hide();
+  });
+
+  bcpPanel.port.on('authenticationCompleted', function(token) {
+    ID = {token: token};
+    bcpPanel.destroy();
+
+    // FIXME: now do the IdP provisioning flow
+    console.log("now I would be provisioning");
+  });
+  
   return bcpPanel;
 }
 
 var connectPanel = panel.Panel({
   contentURL : data.url("signin.html"),
   contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("signin.js")],
+  contentScriptWhen: 'ready',
   width: 422,
   height: 272,
 });
@@ -39,13 +65,30 @@ connectPanel.port.on('login', function(email) {
   });
 });
 
+var statusPanel = panel.Panel({
+  contentURL : data.url("status.html"),
+  contentScriptFile : [data.url("jquery-1.7.1.min.js"), data.url("status.js")],
+  width: 422,
+  height: 272
+});
+
+statusPanel.port.on('logout', function() {
+  ID = null;
+  statusPanel.hide();
+});
 
 var widget = widgets.Widget({
   id: "connect-widget",
   label: "Connect to Firefox",
   contentURL: data.url('firefox.png'),
   onClick: function() {
-    connectPanel.show();
+    if (ID) {
+      statusPanel.show();
+      statusPanel.port.emit('show', ID);
+    } else {
+      connectPanel.show();
+      connectPanel.port.emit('go');
+    }
   }
 });
 

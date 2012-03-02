@@ -11,5 +11,13 @@ exports.writes_db = false;
 //exports.authed = false;
 
 exports.process = function(req, res) {
-  res.json({success: false});
+  console.log("yo");
+  res.json({
+    success: true,
+    services: {
+      'bookmarks' : 'https://services.mozilla.org/bookmarks',
+      'apps' : 'https://services.mozilla.org/apps'
+    },
+    identities: ['ben@adida.net', 'benadida@mozilla.com']
+  });
 };

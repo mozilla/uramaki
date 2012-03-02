@@ -13,20 +13,28 @@ unsafeWindow.navigator.wrappedJSObject.id = (function() {
     email = e;
   });
 
-  // called by BCP to initiate process
-  var beginBCPLogin = function(cb) {
-    console.log("getting...");
-    setTimeout(function() {cb(email);}, 0);
+  var beginAuthentication = function(cb) {
+    // XXX - not a timeout, come on
+    window.setTimeout(function() {cb(email);}, 100);
   };
 
-  var raiseBCPLoginFailure = function(error) {
-    console.log("emitting failure");
-    self.port.emit("bcpLoginFailure", error);
+  var raiseAuthenticationFailure = function() {
+    self.port.emit("authenticationFailure", error);
+  };
+
+  var cancelAuthentication = function() {
+    self.port.emit("authenticationCanceled");
+  };
+
+  var completeAuthentication = function(token) {
+    self.port.emit("authenticationCompleted", token);
   };
   
   return {
-    beginBCPLogin: beginBCPLogin,
-    raiseBCPLoginFailure : raiseBCPLoginFailure
+    beginAuthentication: beginAuthentication,
+    raiseAuthenticationFailure: raiseAuthenticationFailure,
+    cancelAuthentication: cancelAuthentication,
+    completeAuthentication: completeAuthentication
   };
 })();
 
