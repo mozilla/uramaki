@@ -242,6 +242,7 @@ exports.setup = function(options, app) {
       }
 
       // validate the arguments of the request
+      logger.debug(method + " - " + req.url);
       wsapis[method][operation].validate(req, resp, function() {
         wsapis[method][operation].process(req, resp);
       });

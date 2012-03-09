@@ -5,18 +5,11 @@
 const
 wsapi = require('../wsapi.js');
 
-exports.url = '/bcp/login';
-exports.method = 'post';
+exports.url = '/bcp/provision';
+exports.method = 'get';
 exports.writes_db = false;
 //exports.authed = false;
 
 exports.process = function(req, res) {
-  res.json({
-    success: true,
-    services: {
-      'bookmarks' : 'https://services.mozilla.org/bookmarks',
-      'apps' : 'https://services.mozilla.org/apps'
-    },
-    identities: ['ben@adida.net', 'benadida@mozilla.com']
-  });
+  res.render('provision.ejs', {});
 };

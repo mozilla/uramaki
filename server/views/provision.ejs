@@ -1,0 +1,17 @@
+
+<script language="Javascript">
+window.onload = function() {
+  // get parameters of provisioning
+  navigator.id.beginProvisioning(function(email, cert_duration, auth_token) {
+    navigator.id.genKeyPair(function(pubkey) {
+      $.post("/bcp/cert", {pubkey: pubkey}, function(result) {
+        navigator.id.registerCertificate(result.cert);
+      });
+    });
+  });
+}
+</script>
+
+<h2>provision Persona</h2>
+
+

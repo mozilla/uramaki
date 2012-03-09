@@ -6,6 +6,7 @@ console.log("loading bcp.js");
 
 unsafeWindow.navigator.wrappedJSObject.id = (function() {
   var email = null;
+  var complete = false;
   
   // browsing context provider
   self.port.on("setEmail", function(e) {
@@ -27,7 +28,10 @@ unsafeWindow.navigator.wrappedJSObject.id = (function() {
   };
 
   var completeAuthentication = function(token) {
-    self.port.emit("authenticationCompleted", token);
+    if (!complete) {
+      complete = true;
+      self.port.emit("authenticationCompleted", token);
+    }
   };
   
   return {

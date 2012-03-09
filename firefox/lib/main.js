@@ -3,6 +3,7 @@ const tabs = require("tabs");
 const data = require("self").data;
 const panel = require("panel");
 const bcp = require("bcp");
+const idp = require("idp");
 const timers = require("timers");
 
 var ID = null;
@@ -18,7 +19,7 @@ function showErrorPanel(message) {
   timers.setTimeout(function() {errorPanel.destroy();}, 3000);
 }
 
-function makeBCPPanel(signinURL) {
+function makeBCPPanel(email, signinURL, provisionURL) {
   var bcpPanel = panel.Panel({
     contentURL : signinURL,
     contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("bcp.js")],
@@ -40,9 +41,17 @@ function makeBCPPanel(signinURL) {
     ID = {token: token};
     bcpPanel.destroy();
 
-    // FIXME: now do the IdP provisioning flow
-    console.log("now I would be provisioning");
+    // provision
+    idp.provision(email, provisionURL, token, function(err, cert) {
+      if (err)
+        showErrorPanel("oy!");
+
+      console.log("got cert: " + cert);
+    });
   });
+
+  bcpPanel.show();
+  bcpPanel.port.emit('setEmail', email);
   
   return bcpPanel;
 }
@@ -59,9 +68,7 @@ connectPanel.port.on('login', function(email) {
   // discover the BCP for the email address in question
   bcp.discover(email, function(bcp) {
     connectPanel.hide();
-    var bcp_panel = makeBCPPanel(bcp.loginURL);
-    bcp_panel.show();
-    bcp_panel.port.emit('setEmail', email);
+    var bcp_panel = makeBCPPanel(email, bcp.loginURL, bcp.provisionURL);
   });
 });
 
