@@ -26,8 +26,10 @@ Third-Party BrowserID Service
 
 Third-party BrowserID services are typed by URL (e.g. the discovery
 URL above). These URLs are expected to be loaded in an IFRAME in a
-user-agent, with communication via postMessage from the parent frame
-(window.parent). The protocol goes like this:
+user-agent, with communication via postMessage. To send a message, the
+service uses either a special variable, window.channel, if it is
+present, or the parent frame (window.parent). The protocol goes like
+this:
 
 * service URL loaded in Service Frame (IFRAME)
 * Service Frame postMessage to Browser Frame
