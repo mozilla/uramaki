@@ -57,13 +57,12 @@ function makeBCPPanel(email, signinURL, provisionURL, discoveryURL) {
           console.log("got discovery service");
 
           discoveryService.call("getIdentities", {}, function(err, result) {
-            ID.identities = result.identities;
+            ID.identities = result;
 
             discoveryService.call("getServices", {}, function(err, result) {
-              ID.services = result.services;
+              ID.services = result;
 
-              console.log("got full stuff:");
-              console.log(ID);
+              console.log(JSON.stringify(ID));
               discoveryService.close();
             });
           });

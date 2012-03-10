@@ -7,15 +7,22 @@ const data = require("self").data;
 
 exports.initiate = function(serviceURL, cert, cb) {
   console.log("initiating service to " + serviceURL);
+  /*
   var servicePanel = panel.Panel({
     contentURL: data.url("service.html"),
     contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("service.js")]
+  });*/
+  
+  var servicePanel = panel.Panel({
+    contentURL: serviceURL,
+    contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("servicedirect.js")],
+    contentScriptWhen: 'ready'
   });
 
   // set up the response handling for later
   var responseCB = null;
   servicePanel.port.on('response', function(result) {
-    responseCB(result);
+    responseCB(null, result);
   });
 
   // set up the service instance
@@ -46,5 +53,5 @@ exports.initiate = function(serviceURL, cert, cb) {
   });
 
   // and now we initiate things
-  servicePanel.port.emit("initiate", serviceURL);
+  // servicePanel.port.emit("initiate", serviceURL);
 };

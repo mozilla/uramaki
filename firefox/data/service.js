@@ -10,12 +10,14 @@ var origin;
 self.port.on("initiate", function(serviceURL) {
   console.log("setting service URL to " + serviceURL);
   $('#serviceFrame').attr('src', serviceURL);
-  frame = $('#serviceFrame')[0].contentWindow;
+  frame = $('#serviceFrame')[0].contentWindow.wrappedJSObject;
+  console.log(frame);
 });
 
 self.port.on("credentials", function(creds) {
   console.log("got credentials going to " + origin);
-  frame.postMessage({type: "credentials", credentials: creds}, origin);
+  frame.postMessage({type: "credentials", credentials: creds}, "*");
+  console.log("sent credentials");
 });
 
 self.port.on("call", function(call) {

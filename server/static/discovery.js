@@ -2,22 +2,26 @@
 var origin=null;
 
 function getIdentities() {
-  send(["ben@adida.net", "ben2@adida.net"]);
+  send({type: "response", result: ["ben@adida.net", "ben2@adida.net"]});
 }
 
 function getServices() {
   send({
-    "bookmarks": "https://bookmarks.services.mozilla.org",
-    "apps": "https://apps.services.mozilla.org"
-  });
+    type: "response", result: {
+      "bookmarks": "https://bookmarks.services.mozilla.org",
+      "apps": "https://apps.services.mozilla.org"
+    }});
 }
 
 function send(data) {
-  window.parent.postMessage(data, origin || "*");
+  $.get("/sending", {data: data}, function() {});
+
+  var target = window.channel || window.parent;
+  target.postMessage(data, origin || "*");
 }
 
 function receive(event) {
-  $.get("/foo", {data: data}, function() {});
+  $.get("/foo", {data: event.data}, function() {});
   $.get("/foo", {origin: event.origin}, function() {});
 
   // lock in the origin
