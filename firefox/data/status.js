@@ -1,7 +1,7 @@
 
 // focus the email dialog
 self.port.on('show', function(id) {
-  $('#email').html(id.identities[0]);
+  $('#email').html(id.email);
 });
 
 $('#logout').click(function(e) {

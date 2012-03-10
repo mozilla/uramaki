@@ -5,6 +5,7 @@ const panel = require("panel");
 const bcp = require("bcp");
 const idp = require("idp");
 const timers = require("timers");
+const service = require("service");
 
 var ID = null;
 
@@ -19,7 +20,7 @@ function showErrorPanel(message) {
   timers.setTimeout(function() {errorPanel.destroy();}, 3000);
 }
 
-function makeBCPPanel(email, signinURL, provisionURL) {
+function makeBCPPanel(email, signinURL, provisionURL, discoveryURL) {
   var bcpPanel = panel.Panel({
     contentURL : signinURL,
     contentScriptFile: [data.url("jquery-1.7.1.min.js"), data.url("bcp.js")],
@@ -38,7 +39,7 @@ function makeBCPPanel(email, signinURL, provisionURL) {
   });
 
   bcpPanel.port.on('authenticationCompleted', function(token) {
-    ID = {token: token};
+    ID = {token: token, email: email};
     bcpPanel.destroy();
 
     // provision
@@ -47,6 +48,27 @@ function makeBCPPanel(email, signinURL, provisionURL) {
         showErrorPanel("oy!");
 
       console.log("got cert: " + cert);
+
+      // now do discovery
+      service.initiate(discoveryURL, cert, function(err, discoveryService) {
+        if (err) {
+          console.log("oh oh");
+        } else {
+          console.log("got discovery service");
+
+          discoveryService.call("getIdentities", {}, function(err, result) {
+            ID.identities = result.identities;
+
+            discoveryService.call("getServices", {}, function(err, result) {
+              ID.services = result.services;
+
+              console.log("got full stuff:");
+              console.log(ID);
+              discoveryService.close();
+            });
+          });
+        }
+      });
     });
   });
 
@@ -68,7 +90,7 @@ connectPanel.port.on('login', function(email) {
   // discover the BCP for the email address in question
   bcp.discover(email, function(bcp) {
     connectPanel.hide();
-    var bcp_panel = makeBCPPanel(email, bcp.loginURL, bcp.provisionURL);
+    var bcp_panel = makeBCPPanel(email, bcp.loginURL, bcp.provisionURL, bcp.discoveryURL);
   });
 });
 
